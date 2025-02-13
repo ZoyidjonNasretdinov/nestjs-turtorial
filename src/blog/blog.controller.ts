@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Post, Body } from '@nestjs/common';
+import { Controller, Get, HttpCode, Post, Body, Param, Patch, Delete} from '@nestjs/common';
 import { BlogDto } from './dto/blog.dto';
 
 @Controller('blog')
@@ -45,5 +45,28 @@ export class BlogController {
     };
     this.blogs.push(newBlog);
     return newBlog;
+  }
+
+  @HttpCode(200)
+  @Get(':id')
+  getById(@Param('id') id: string){
+    const blog = this.blogs.find((blog) => blog.id === Number(id));
+    return blog;
+  }
+
+  @HttpCode(200)
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: BlogDto){
+    let currentBlog = this.blogs.find((blog) => blog.id === Number(id));
+    currentBlog = dto;
+    return currentBlog;
+  }
+
+  @HttpCode(200)
+  @Delete(':id')
+  delete(@Param('id') id: string){
+    const index = this.blogs.findIndex((blog) => blog.id === Number(id));
+    this.blogs.splice(index, 1);
+    return this.blogs;
   }
 }
