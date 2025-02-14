@@ -1,11 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BlogDto } from './dto/blog.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Blog, BlogDocument } from './blog.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class BlogService {
   private blogs: BlogDto[];
 
-  constructor() {
+  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {
     this.blogs = [
       {
         id: 1,
@@ -29,7 +32,7 @@ export class BlogService {
   }
 
   getAllBlog(): BlogDto[] {
-    return this.blogs;
+    return this.blogModel.find({});
   }
 
   createBlog(dto: Omit<BlogDto, 'id'>): BlogDto {
@@ -40,7 +43,7 @@ export class BlogService {
     this.blogs.push(newBlog);
     return newBlog;
   }
-  
+
   getById(id: number): BlogDto {
     const blog = this.blogs.find((blog) => blog.id === id);
     if (!blog) {
@@ -69,3 +72,7 @@ export class BlogService {
     return this.blogs;
   }
 }
+
+//zoyidjonnasretdinovcoder
+// GTbR6CM8f8pa83YU
+// mongodb+srv://zoyidjonnasretdinovcoder:<db_password>@cluster0.f63vc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
