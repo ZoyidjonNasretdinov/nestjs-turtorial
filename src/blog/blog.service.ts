@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BlogDto } from './dto/blog.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocument } from './blog.schema';
@@ -31,48 +31,23 @@ export class BlogService {
     ];
   }
 
-  getAllBlog(): BlogDto[] {
-    return this.blogModel.find({});
+  async getAllBlog() {
+    return this.blogModel.find().exec();
   }
 
-  createBlog(dto: Omit<BlogDto, 'id'>): BlogDto {
-    const newBlog: BlogDto = {
-      id: this.blogs.length ? this.blogs[this.blogs.length - 1].id + 1 : 1, // Ensures unique ID
-      ...dto, // Spreads only title, excerpt, description
-    };
-    this.blogs.push(newBlog);
-    return newBlog;
+  async create(dto: BlogDto) {
+    return this.blogModel.create(dto);
   }
 
-  getById(id: number): BlogDto {
-    const blog = this.blogs.find((blog) => blog.id === id);
-    if (!blog) {
-      throw new NotFoundException(`Blog with ID ${id} not found`);
-    }
-    return blog;
+  async getById(id: string) {
+    return this.blogModel.findById(id);
   }
 
-  updateBlog(id: number, dto: Partial<BlogDto>): BlogDto {
-    const blogIndex = this.blogs.findIndex((blog) => blog.id === id);
-    if (blogIndex === -1) {
-      throw new NotFoundException(`Blog with ID ${id} not found`);
-    }
-
-    this.blogs[blogIndex] = { ...this.blogs[blogIndex], ...dto };
-    return this.blogs[blogIndex];
+  async update(id: string, dto: BlogDto) {
+    return this.blogModel.findByIdAndUpdate(id, dto, { new: true });
   }
 
-  deleteBlog(id: number): BlogDto[] {
-    const blogIndex = this.blogs.findIndex((blog) => blog.id === id);
-    if (blogIndex === -1) {
-      throw new NotFoundException(`Blog with ID ${id} not found`);
-    }
-
-    this.blogs.splice(blogIndex, 1);
-    return this.blogs;
+  async delete(id: number) {
+    return this.blogModel.findByIdAndDelete(id);
   }
 }
-
-//zoyidjonnasretdinovcoder
-// GTbR6CM8f8pa83YU
-// mongodb+srv://zoyidjonnasretdinovcoder:<db_password>@cluster0.f63vc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
